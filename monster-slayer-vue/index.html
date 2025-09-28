@@ -33,9 +33,11 @@
         </div>
       </section>
       <section id="controls">
-        <button @click="resolveCombat(5, 12)">ATTACK</button>
-        <button @click="resolveCombat(1, 100)">SPECIAL ATTACK</button>
-        <button @click="healPlayer">HEAL</button>
+        <button @click="playerAttack()">ATTACK</button>
+        <button @click="playerSpecialAttack" :disabled="!isSpecialAttackReady">
+          SPECIAL ATTACK
+        </button>
+        <button @click="playerHeal" :disabled="!canHeal">HEAL</button>
         <button>SURRENDER</button>
       </section>
       <section id="log" class="container">

@@ -5,41 +5,92 @@ function getRandomValue(min, max) {
 Vue.createApp({
   data() {
     return {
-      playerMaxHealth: 100,
-      playerHealth: 100,
-      monsterMaxHealth: 150,
-      monsterHealth: 150,
+      player: {
+        maxHealth: 100,
+        currentHealth: 100,
+        specialAttack: {
+          dmg: 15,
+          charge: 0,
+        },
+        healing: {
+          amountHealed: 30,
+          uses: 3,
+        },
+      },
+
+      monster: {
+        maxHealth: 150,
+        currentHealth: 150,
+      },
     };
   },
   methods: {
-    resolveCombat(playerMinDmg, playerMaxDmg) {
-      console.log(this.playerHealth);
-      this.monsterHealth = Math.max(
+    playerAttack(minDmg = 5, maxDmg = 12) {
+      this.monster.currentHealth = Math.max(
         0,
-        this.monsterHealth - getRandomValue(playerMinDmg, playerMaxDmg)
+        this.monster.currentHealth - getRandomValue(minDmg, maxDmg)
       );
 
-      this.playerHealth = Math.max(
+      // Charge the special attack with one point after regular attack
+      this.player.specialAttack.charge++;
+
+      // Monster always attacks after the player
+      this.monsterAttack();
+    },
+
+    monsterAttack() {
+      this.player.currentHealth = Math.max(
         0,
-        this.playerHealth - getRandomValue(8, 15)
+        this.player.currentHealth - getRandomValue(8, 15)
       );
     },
-    healPlayer() {
-      this.playerHealth = Math.min(
-        this.playerMaxHealth,
-        this.playerHealth + getRandomValue(10, 20)
+
+    playerSpecialAttack() {
+      // Special attack damage scales with the number of charges
+      const specialAttackDamage =
+        this.player.specialAttack.dmg * this.player.specialAttack.charge;
+
+      this.playerAttack(specialAttackDamage, specialAttackDamage);
+
+      this.player.specialAttack.isReady = false;
+      this.player.specialAttack.charge = 0;
+    },
+
+    playerHeal() {
+      this.player.currentHealth = Math.min(
+        this.player.maxHealth,
+        this.player.currentHealth + this.player.healing.amountHealed
       );
+
+      this.player.healing.uses = Math.max(0, this.player.healing.uses - 1);
     },
   },
   computed: {
     monsterHealthBar() {
       return (
-        Math.max(0, (this.monsterHealth / this.monsterMaxHealth) * 100) + "%"
+        Math.max(
+          0,
+          (this.monster.currentHealth / this.monster.maxHealth) * 100
+        ) + "%"
       );
     },
+
     playerHealthBar() {
       return (
-        Math.max(0, (this.playerHealth / this.playerMaxHealth) * 100) + "%"
+        Math.max(0, (this.player.currentHealth / this.player.maxHealth) * 100) +
+        "%"
+      );
+    },
+
+    isSpecialAttackReady() {
+      return this.player.specialAttack.charge >= 3;
+    },
+
+    canHeal() {
+      // Player can only heal if damaged and uses are available
+      return (
+        this.player.healing.uses > 0 &&
+        this.player.currentHealth != this.player.maxHealth
       );
     },
   },
