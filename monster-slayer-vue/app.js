@@ -13,7 +13,7 @@ Vue.createApp({
           charge: 0,
         },
         healing: {
-          amountHealed: 30,
+          healingAmount: 30,
           uses: 3,
         },
       },
@@ -22,6 +22,8 @@ Vue.createApp({
         maxHealth: 150,
         currentHealth: 150,
       },
+
+      surrendered: false,
     };
   },
   methods: {
@@ -59,10 +61,18 @@ Vue.createApp({
     playerHeal() {
       this.player.currentHealth = Math.min(
         this.player.maxHealth,
-        this.player.currentHealth + this.player.healing.amountHealed
+        this.player.currentHealth + this.player.healing.healingAmount
       );
 
       this.player.healing.uses = Math.max(0, this.player.healing.uses - 1);
+    },
+
+    playerSurrender() {
+      this.surrendered = true;
+    },
+
+    restart() {
+      window.location.reload();
     },
   },
   computed: {
@@ -92,6 +102,14 @@ Vue.createApp({
         this.player.healing.uses > 0 &&
         this.player.currentHealth != this.player.maxHealth
       );
+    },
+
+    victory() {
+      return this.monster.currentHealth === 0;
+    },
+
+    gameOver() {
+      return this.player.currentHealth === 0 || this.surrendered;
     },
   },
   watch: {},

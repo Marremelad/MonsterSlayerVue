@@ -47,6 +47,24 @@ section {
   border-radius: 12px;
 }
 
+.restart-screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.restart-screen h2 {
+  margin: 0;
+  font-size: 10vw;
+}
+
+.restart-screen button {
+  font-size: 1rem;
+}
+
 #monster h2,
 #player h2 {
   margin: 0.25rem;

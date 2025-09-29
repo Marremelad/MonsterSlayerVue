@@ -17,33 +17,51 @@
       <h1>Monster Slayer</h1>
     </header>
     <div id="game">
-      <section id="monster" class="container">
-        <h2>Monster Health</h2>
-        <div class="healthbar">
-          <div
-            class="healthbar__value"
-            :style="{width: monsterHealthBar}"
-          ></div>
-        </div>
-      </section>
-      <section id="player" class="container">
-        <h2>Your Health</h2>
-        <div class="healthbar">
-          <div class="healthbar__value" :style="{width: playerHealthBar}"></div>
-        </div>
-      </section>
-      <section id="controls">
-        <button @click="playerAttack()">ATTACK</button>
-        <button @click="playerSpecialAttack" :disabled="!isSpecialAttackReady">
-          SPECIAL ATTACK
-        </button>
-        <button @click="playerHeal" :disabled="!canHeal">HEAL</button>
-        <button>SURRENDER</button>
-      </section>
-      <section id="log" class="container">
-        <h2>Battle Log</h2>
-        <ul></ul>
-      </section>
+      <div v-if="victory" class="restart-screen">
+        <h2>VICTORY!</h2>
+        <button @click="restart">PLAY AGAIN</button>
+      </div>
+
+      <div v-else-if="gameOver" class="restart-screen">
+        <h2>GAME OVER...</h2>
+        <button @click="restart">PLAY AGAIN</button>
+      </div>
+
+      <div v-else>
+        <section id="monster" class="container">
+          <h2>Monster Health</h2>
+          <div class="healthbar">
+            <div
+              class="healthbar__value"
+              :style="{width: monsterHealthBar}"
+            ></div>
+          </div>
+        </section>
+        <section id="player" class="container">
+          <h2>Your Health</h2>
+          <div class="healthbar">
+            <div
+              class="healthbar__value"
+              :style="{width: playerHealthBar}"
+            ></div>
+          </div>
+        </section>
+        <section id="controls">
+          <button @click="playerAttack()">ATTACK</button>
+          <button
+            @click="playerSpecialAttack"
+            :disabled="!isSpecialAttackReady"
+          >
+            SPECIAL ATTACK
+          </button>
+          <button @click="playerHeal" :disabled="!canHeal">HEAL</button>
+          <button @click="playerSurrender">SURRENDER</button>
+        </section>
+        <section id="log" class="container">
+          <h2>Battle Log</h2>
+          <ul></ul>
+        </section>
+      </div>
     </div>
   </body>
 </html>
