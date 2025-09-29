@@ -58,7 +58,8 @@
           <li v-for="log in battleLogs" :key="log">
             <span :class="`log--${log.actionBy}`">{{ log.actionBy }}</span> -
             <span>{{ log.actionType }}</span> -
-            <span :class="`log--${log.actionType}`">{{ log.actionValue }}</span>
+            <span :class="`log--${log.actionType}`">{{ log.actionValue }}</span> -
+            <span class="log--round">round {{ log.round }}</span>
           </li>
         </ul>
       </section>

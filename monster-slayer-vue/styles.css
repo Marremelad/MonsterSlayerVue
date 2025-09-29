@@ -133,9 +133,13 @@ button:disabled {
 }
 
 .log--special-attack {
-  color: rgb(22, 135, 135)
+  color: purple
 }
 
 .log--heal {
   color: green;
+}
+
+.log--round {
+  color: gray;
 }

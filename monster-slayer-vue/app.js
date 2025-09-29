@@ -23,13 +23,17 @@ Vue.createApp({
         currentHealth: 150,
       },
 
+      round: 0,
+
       battleLogs: [],
 
       surrendered: false,
     };
   },
   methods: {
-    playerAttack(minDmg = 5, maxDmg = 12) {
+    playerAttack(minDmg = 5, maxDmg = 12, actionType = "attack") {
+      this.round++;
+
       const damage = getRandomValue(minDmg, maxDmg);
 
       this.monster.currentHealth = Math.max(
@@ -40,7 +44,7 @@ Vue.createApp({
       // Charge the special attack with one point after regular attack
       this.player.specialAttack.charge++;
 
-      this.addLog("player", "attack", damage);
+      this.addLog("player", actionType, damage, this.round);
 
       // Monster always attacks after the player
       this.monsterAttack();
@@ -54,7 +58,7 @@ Vue.createApp({
         this.player.currentHealth - damage
       );
 
-      this.addLog("monster", "attack", damage);
+      this.addLog("monster", "attack", damage, this.round);
     },
 
     playerSpecialAttack() {
@@ -62,15 +66,19 @@ Vue.createApp({
       const specialAttackDamage =
         this.player.specialAttack.dmg * this.player.specialAttack.charge;
 
-      this.playerAttack(specialAttackDamage / 2, specialAttackDamage);
-
-      this.addLog("player", "special-attack", specialAttackDamage);
+      this.playerAttack(
+        specialAttackDamage / 2,
+        specialAttackDamage,
+        "special-attack"
+      );
 
       this.player.specialAttack.isReady = false;
       this.player.specialAttack.charge = 0;
     },
 
     playerHeal() {
+      this.round++;
+
       const healingAmount = getRandomValue(
         this.player.healing.healingAmount / 2,
         this.player.healing.healingAmount
@@ -81,16 +89,18 @@ Vue.createApp({
         this.player.currentHealth + healingAmount
       );
 
-      this.addLog("player", "heal", healingAmount);
-
+      this.addLog("player", "heal", healingAmount, this.round);
       this.player.healing.uses = Math.max(0, this.player.healing.uses - 1);
+
+      this.monsterAttack();
     },
 
-    addLog(actionBy, actionType, actionValue) {
+    addLog(actionBy, actionType, actionValue, round) {
       this.battleLogs.unshift({
         actionBy: actionBy,
         actionType: actionType,
         actionValue: actionValue,
+        round: round,
       });
     },
 
