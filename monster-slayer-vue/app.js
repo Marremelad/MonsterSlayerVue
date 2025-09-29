@@ -109,7 +109,29 @@ Vue.createApp({
     },
 
     restart() {
-      window.location.reload();
+      this.player = {
+        maxHealth: 100,
+        currentHealth: 100,
+        specialAttack: {
+          dmg: 15,
+          charge: 0,
+        },
+        healing: {
+          healingAmount: 30,
+          uses: 3,
+        },
+      };
+
+      this.monster = {
+        maxHealth: 150,
+        currentHealth: 150,
+      };
+
+      this.round = 0;
+
+      this.battleLogs = [];
+
+      this.surrendered = false;
     },
   },
   computed: {
