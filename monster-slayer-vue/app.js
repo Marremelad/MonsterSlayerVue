@@ -23,28 +23,38 @@ Vue.createApp({
         currentHealth: 150,
       },
 
+      battleLogs: [],
+
       surrendered: false,
     };
   },
   methods: {
     playerAttack(minDmg = 5, maxDmg = 12) {
+      const damage = getRandomValue(minDmg, maxDmg);
+
       this.monster.currentHealth = Math.max(
         0,
-        this.monster.currentHealth - getRandomValue(minDmg, maxDmg)
+        this.monster.currentHealth - damage
       );
 
       // Charge the special attack with one point after regular attack
       this.player.specialAttack.charge++;
+
+      this.addLog("player", "attack", damage);
 
       // Monster always attacks after the player
       this.monsterAttack();
     },
 
     monsterAttack() {
+      const damage = getRandomValue(8, 15);
+
       this.player.currentHealth = Math.max(
         0,
-        this.player.currentHealth - getRandomValue(8, 15)
+        this.player.currentHealth - damage
       );
+
+      this.addLog("monster", "attack", damage);
     },
 
     playerSpecialAttack() {
@@ -52,19 +62,36 @@ Vue.createApp({
       const specialAttackDamage =
         this.player.specialAttack.dmg * this.player.specialAttack.charge;
 
-      this.playerAttack(specialAttackDamage, specialAttackDamage);
+      this.playerAttack(specialAttackDamage / 2, specialAttackDamage);
+
+      this.addLog("player", "special-attack", specialAttackDamage);
 
       this.player.specialAttack.isReady = false;
       this.player.specialAttack.charge = 0;
     },
 
     playerHeal() {
-      this.player.currentHealth = Math.min(
-        this.player.maxHealth,
-        this.player.currentHealth + this.player.healing.healingAmount
+      const healingAmount = getRandomValue(
+        this.player.healing.healingAmount / 2,
+        this.player.healing.healingAmount
       );
 
+      this.player.currentHealth = Math.min(
+        this.player.maxHealth,
+        this.player.currentHealth + healingAmount
+      );
+
+      this.addLog("player", "heal", healingAmount);
+
       this.player.healing.uses = Math.max(0, this.player.healing.uses - 1);
+    },
+
+    addLog(actionBy, actionType, actionValue) {
+      this.battleLogs.unshift({
+        actionBy: actionBy,
+        actionType: actionType,
+        actionValue: actionValue,
+      });
     },
 
     playerSurrender() {
@@ -101,6 +128,12 @@ Vue.createApp({
       return (
         this.player.healing.uses > 0 &&
         this.player.currentHealth != this.player.maxHealth
+      );
+    },
+
+    draw() {
+      return (
+        this.player.currentHealth === 0 && this.monster.currentHealth === 0
       );
     },
 
